@@ -1,7 +1,7 @@
 ## linux 安装jenkins
 0. wget https://pkg.jenkins.io/redhat-stable/jenkins-2.222.3-1.1.noarch.rpm https://pkg.jenkins.io/redhat-stable/
 https://blog.csdn.net/xishaoguo/article/details/88577459
-1. sudo rpm -ih jenkins-2.164.1-1.1.noarch.rpm命令安装jenkins
+1. sudo rpm -ih jenkins-2.222.3-1.1.noarch.rpm 命令安装jenkins
 enkins-2.147-1.1.noarch.rpm: 头V4 DSA/SHA1 Signature, 密钥 ID d50582e6: NOKEY
 
 
@@ -41,8 +41,9 @@ PARAMS="--logfile=/var/log/jenkins/jenkins.log --webroot=/var/cache/jenkins/war 
 ```
 7. 设置过防火墙，开放过端口，
 
-8. 密码 f0d16b3b09894e33a90fd556d9eecf48
+8. 密码 2549af5920d74fdb93614125cb46c757
 
+9. 账户 admin 2549af5920d74fdb93614125cb46c757
 
 ## 卸载
 1. rpm卸载
