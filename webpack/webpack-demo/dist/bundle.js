@@ -88,7 +88,24 @@
 /* 0 */
 /***/ (function(module, exports) {
 
-"import testa from \"./a\"\r\n\r\nfunction component() {\r\nvar element = document.createElement('div');\r\n\r\n// Lodash（目前通过一个 script 脚本引入）对于执行这一行是必需的\r\nelement.innerHTML = _.join(['Hello', 'webpack', testa.a], ' ');\r\n\r\nreturn element;\r\n}\r\n\r\ndocument.body.appendChild(component());"
+// zuozhe xuyuan 
+// timer: 2020-06-23 
+var obj = {
+	head: "test-a"
+}
+// import testa from "./a.js"
+
+function component() {
+var element = document.createElement('div');
+// element.innerHTML = ['Hello', 'webpack', testa.a, obj.head].join(" ") 
+element.innerHTML = ['Hello', 'webpack'].join(" ") + 
+'<br/><img src="./v2-8cec7f1a1597ed7759a5c3d74546b550_720w.jpg">' + 
+'<img src="./u=2050318681,1081448419&fm=26&gp=0.jpg">'
+
+return element;
+}
+
+document.body.appendChild(component());  
 
 /***/ })
 /******/ ]);
