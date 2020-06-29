@@ -1,0 +1,81 @@
+<html >
+  <head>
+    <meta charset="UTF-8">
+   <script src="./my-redux.js"></script>
+  </head>
+  <body>
+    <div>
+      <button id="plus">plus</button>
+      <button id="minus">minus</button>
+    </div>
+    <script>
+      let plus = document.getElementById("plus");
+      let minus = document.getElementById("minus");
+
+      console.log(Redux);
+
+      function counter(state = 0, action) {
+        switch (action.type) {
+          case "INCREMENT":
+            return state + 1;
+          case "DECREMENT":
+            return state - 1;
+          default:
+            return state;
+        }
+      }
+
+      function counter1(state = { c: 0 }, action) {
+        switch (action.type) {
+          case "INCREMENT1":
+            state.c += 1;
+            return state;
+          case "DECREMENT1":
+            state.c -= 1;
+            return state;
+          default:
+            return state;
+        }
+      }
+      let combineReducers = Redux.combineReducers({
+        counter,
+        counter1,
+      });
+
+      console.log(combineReducers);
+
+      const logger = store => next => action => {
+			  let result = next(action)
+			  console.log('next state', store.getState())
+			  return result
+			}
+      let store = Redux.createStore(combineReducers, {}, Redux.applyMiddleware(logger));
+
+      // console.log("store", typeof sotre, store);
+      const counter1Increant = Redux.bindActionCreators(() => {
+        return {
+          type: "INCREMENT1"
+        }
+      } , store.dispatch)
+
+
+      store.subscribe(() => {
+        // console.log("store", typeof sotre, store);
+        console.log("store.subscribe", store.getState());
+      });
+
+      plus.addEventListener("click", () => {
+        console.log("click pluss");
+
+        // store.dispatch({ type: "INCREMENT" });
+        // store.dispatch({ type: "INCREMENT1" });
+        counter1Increant()
+      });
+
+      minus.addEventListener("click", () => {
+        console.log("click minus");
+        store.dispatch({ type: "DECREMENT" });
+      });
+    </script>
+  </body>
+</html>

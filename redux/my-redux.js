@@ -3,7 +3,7 @@
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
 	(global = global || self, factory(global.Redux = {}));
 	}(
-	this, 
+	this,
 	function (exports) {
 		// exports 挂载到全局对象/抛出
 		'use strict';
@@ -25,7 +25,7 @@
 
 			return result;
 		}
-		
+
 		// 判断全局变量
 		var root // 定义全局变量名
 		if (typeof self !== "undefined") {
@@ -39,7 +39,7 @@
 		} else {
 			root = Function('return this')()
 		}
-		
+
 		var result = symbolObservablePonyfill(root)
 
 		// 定义随机字符串生成工具
@@ -56,7 +56,7 @@
 				return "@@redux/PROBE_UNKNOWN_ACTION" + randomString();
 			}
 		};
-		
+
 		// 判断一个对象为普通对象的检查方法
 		function isPlainObject(obj) {
 			if (typeof obj !== "object" || obj === null) {
@@ -75,15 +75,18 @@
 		// 创建store
 		/**
 		 * @param {Function} reducer, 默认提供当前状态树（state tree），和action为参数，返回新的state tree 的一个方法
-		 * 
-		 * @param {any} [preloadedstate] , 初始化State tree, 
-		 * 
+		 *
+		 * @param {any} [preloadedstate] , 初始化State tree,
+		 *
 		 * @param {Function} [enhancer] , applyMiddleware()
-		 * 
+		 *
 		 * @returns {Store} , redux store
 		 */
 		function createStore(reducer, preloadedstate, enhancer) {
 			var _ref2; // store
+			if (typeof preloadedState === 'function' && typeof enhancer === 'function' || typeof enhancer === 'function' && typeof arguments[3] === 'function') {
+				throw new Error('It looks like you are passing several store enhancers to ' + 'createStore(). This is not supported. Instead, compose them ' + 'together to a single function.');
+			}
 
 			if (typeof preloadedstate === "function" && typeof enhancer === "function") {
 				enhancer = preloadedstate;
@@ -93,9 +96,8 @@
 			if (typeof enhancer !== "undefined") {
 				if (typeof enhancer !== "function") {
 					throw new Error('Expected the enhancer to be a function.');
-				} 
-
-				return enhancer(createStore)(reducer, preloadedState);
+				}
+				return enhancer(createStore)(reducer, preloadedstate);
 			}
 			if (typeof reducer !== 'function') {
 				throw new Error('Expected the reducer to be a function.');
@@ -103,18 +105,18 @@
 
 			var currentReducer = reducer,
 				currentState = preloadedstate,
-				currentListeners = [], 
+				currentListeners = [],
 				nextListeners = currentListeners,
 				isDispatching = false ;
 
-			// 浅拷贝 一份currentListeners 
+			// 浅拷贝 一份currentListeners
 			// 防止使用者在dispatch 是订阅/注销（subscribe/unsubscribe）产生的各种问题
 			function ensureCanMutateNextListeners() {
 				if (nextListeners === currentListeners) {
 					nextListeners = currentListeners.slice()
 				}
 			}
-			
+
 			// 获取当前state
 			function getState() {
 				// 当有修改，同时获取state 会抛出异常
@@ -129,7 +131,7 @@
 			function subscribe(listener) {
 				if (typeof listener !== 'function') {
 					throw new Error('Expected the listener to be a function.');
-				} 
+				}
 				if (isDispatching) {
 					throw new Error('You may not call store.subscribe() while the reducer is executing. ' + 'If you would like to be notified after the store has been updated, subscribe from a ' + 'component and invoke store.getState() in the callback to access the latest state. ' + 'See https://redux.js.org/api-reference/store#subscribelistener for more details.');
 				}
@@ -192,7 +194,7 @@
 				if (typeof nextReducer === 'function') {
 					throw new Error('Expected the nextReducer to be a function.');
 				}
-				
+
 				currentReducer = nextReducer
 				// 重新初始化
 				dispatch({
@@ -203,7 +205,7 @@
 			function observable() {
 				var _ref;
 				var outerSubscribe = subscribe;
-				
+
 				_ref = {
 					subscribe: function subscribe(obsever) {
 						if (typeof obsever !== "object" || obsever === null) {
@@ -250,8 +252,8 @@
 			return _ref2
 		}
 
-		// compose 
-		function compose(...funcs) {	
+		// compose
+		function compose(...funcs) {
 			if (funcs.length === 0) {
 				return arg => arg
 			}
@@ -263,23 +265,21 @@
 			return funcs.reduce((fn1, fn2) => {
 				return (...arg) => {
 					return fn1(fn2(...arg))
-				}	
+				}
 			})
 		}
 
 		// redux 中间件 applyMiddleWare
 		function applyMiddleware() {
 			// const logger = store => next => action => {
-			//   console.group(action.type)
 			//   console.info('dispatching', action)
 			//   let result = next(action)
 			//   console.log('next state', store.getState())
-			//   console.groupEnd(action.type)
 			//   return result
 			// }
 
 			// 获取中间件
-			var _len = arguments.length, 
+			var _len = arguments.length,
 				middlewares = new Array(_len);
 			for ( var _key = 0; _key < _len; _key++) {
 				middlewares[_key] = arguments[_key];
@@ -296,14 +296,14 @@
 						getState: store.getState,
 						dispatch: function dispatch(){
 							return _dispatch.apply(void 0, arguments)
-						} 
+						}
 					}
 
 					var chain = middlewares.map(middleware => {
 						return  middleware(middlewareAPI);
 					})
 
-					_dispatch = compose.apply(void 0, chain)(sotre.dispatch)
+					_dispatch = compose.apply(void 0, chain)(store.dispatch)
 
 					return {
 						...store,
@@ -311,11 +311,62 @@
 					}
 				}
 			}
-			
 		}
 
+		// bindActionCreators
+		function bindActionCreator(actionCreator, dispatch) {
+			return function () {
+				return dispatch(actionCreator.apply(this, arguments));
+			};
+		}
 
+		function bindActionCreators(actionCreators, dispatch) {
+			if (typeof actionCreators === "function") {
+				return bindActionCreator(actionCreators, dispatch)
+			}
 
+			if (typeof actionCreators !== "object" || actionCreators === null) {
+				throw new Error("bindActionCreators expected an object or a function, instead received " + (actionCreators === null ? 'null' : typeof actionCreators) + ". " + "Did you write \"import ActionCreators from\" instead of \"import * as ActionCreators from\"?");
+			}
+
+			var boundActionCreators = {};
+
+			for (var key in actionCreators) {
+				var actionCreator = actionCreators[key];
+
+				if (typeof actionCreator === "function") {
+					boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
+				}
+			}
+
+			return boundActionCreators;
+		}
+
+		function combineReducers(obj = {}) {
+			/**
+			 * {
+			 * 	a: (state, action) => {.... return state},
+			 * 	b: (state, action) => {.... return state},
+			 * }
+			 */
+
+			let _state = {};
+			let _keys = Object.keys(obj);
+
+			// 返回一个reducer
+			return (state, action) => {
+
+				if (state === void 0) {
+					state = {};
+				}
+
+				_keys.forEach(key => {
+					_state[key] = obj[key](state[key], action)
+				})
+
+				return {...state, ..._state}
+			}
+		}
 
 
 		// 添加属性
@@ -327,4 +378,4 @@
 		exports.createStore = createStore;
 		Object.defineProperty(exports, '__esModule', { value: true });
 	}
-)) 
+))
