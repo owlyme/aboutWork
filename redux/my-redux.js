@@ -251,8 +251,7 @@
 		}
 
 		// compose 
-		function compose(...funcs) {
-			
+		function compose(...funcs) {	
 			if (funcs.length === 0) {
 				return arg => arg
 			}
@@ -267,37 +266,49 @@
 				}	
 			})
 		}
-		// middleWare
-
-
 
 		// redux 中间件 applyMiddleWare
-		function applyMiddleWare() {
-			// 	function logger(store) {
-			// let next = store.dispatch
-
-			// // 我们之前的做法:
-			// // store.dispatch = function dispatchAndLog(action) {
-
-			// return function dispatchAndLog(action) {
-			// 	console.log('dispatching', action)
-			// 	let result = next(action)
-			// 	console.log('next state', store.getState())
-			// 	return result
-			// }
+		function applyMiddleware() {
+			// const logger = store => next => action => {
+			//   console.group(action.type)
+			//   console.info('dispatching', action)
+			//   let result = next(action)
+			//   console.log('next state', store.getState())
+			//   console.groupEnd(action.type)
+			//   return result
 			// }
 
 			// 获取中间件
-			var _len = arguments.length, middlewares = new Array(_len),
+			var _len = arguments.length, 
+				middlewares = new Array(_len);
 			for ( var _key = 0; _key < _len; _key++) {
 				middlewares[_key] = arguments[_key];
 			}
 			return function(createStore) {
 				return function (reducer, preloadedState) {
+					var store = createStore.apply(void 0, [reducer, preloadedState]);
 
+					var _dispatch = function dispatch() {
+						throw new Error('Dispatching while constructing your middleware is not allowed. ' + 'Other middleware would not be applied to this dispatch.');
+					};
 
+					var middlewareAPI = {
+						getState: store.getState,
+						dispatch: function dispatch(){
+							return _dispatch.apply(void 0, arguments)
+						} 
+					}
 
-					return createStore(reducer, preloadedState)
+					var chain = middlewares.map(middleware => {
+						return  middleware(middlewareAPI);
+					})
+
+					_dispatch = compose.apply(void 0, chain)(sotre.dispatch)
+
+					return {
+						...store,
+						dispatch: _dispatch
+					}
 				}
 			}
 			
