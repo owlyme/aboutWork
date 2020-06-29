@@ -24,6 +24,7 @@ function httpGet(path) {
         });
       });
     } catch (err) {
+      console.error(`image ${path} can not download`)
       reject(err);
     }
   });
@@ -33,7 +34,7 @@ function httpGetAll(urlList = []) {
   return Promise.all(urlList.map(i => httpGet(i)))
 }
 
-function setWantLodedFileName(urlList) {
+function getWantLodedFileName(urlList) {
   let urlMaps = urlList.reduce((acc, uri) => {
     let name = path.basename(uri)
     return {...acc, [uri]: name }
@@ -76,11 +77,11 @@ function createFilePath(fileName) {
 }
  
 module.exports = function(source) {
-  let pattern = new RegExp("https?:\/\/.+?\.(jpg)|(jpeg)|(png)", "g")
+  let pattern = new RegExp("https?:\/\/.+?\.((jpg)|(jpeg)|(png))", "g")
   let urlList = source.match(pattern)
   if (urlList && urlList.length) {
     const callback = this.async();
-    const wantedUrlMaps = setWantLodedFileName(urlList)
+    const wantedUrlMaps = getWantLodedFileName(urlList)
     removeLoadeFileUrl(loadedFileNameMapPath).then(loadedFileMap => {
       let copyUrlMaps = {...wantedUrlMaps}
       let loadedWantedUrlMaps = {}

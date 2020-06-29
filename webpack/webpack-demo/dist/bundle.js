@@ -86,26 +86,45 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _a_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 // zuozhe xuyuan 
 // timer: 2020-06-23 
 var obj = {
 	head: "test-a"
 }
-// import testa from "./a.js"
+
 
 function component() {
 var element = document.createElement('div');
 // element.innerHTML = ['Hello', 'webpack', testa.a, obj.head].join(" ") 
 element.innerHTML = ['Hello', 'webpack'].join(" ") + 
-'<br/><img src="./v2-8cec7f1a1597ed7759a5c3d74546b550_720w.jpg">' + 
-'<img src="./u=2050318681,1081448419&fm=26&gp=0.jpg">'
+'<br/><img src="./v2-8cec7f1a1597ed7759a5c3d74546b550_720w.jpg" />' + 
+'<img src="./u=2050318681,1081448419&fm=26&gp=0.jpg" />' +
+'<br/><img src="./login_logo.png" />'
 
 return element;
 }
 
 document.body.appendChild(component());  
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// zuozhe xuyuan 
+// timer: 2020-06-23 
+var obj = {
+	head: "test-a"
+}
+/* harmony default export */ __webpack_exports__["default"] = ({
+	a: "test-a"
+});
 
 /***/ })
 /******/ ]);
