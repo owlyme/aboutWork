@@ -33,12 +33,22 @@ var id = "not awesome"
 
 // obj.coolTimeout()
 
-function foo1() {console.log( this.a );}
+// function foo1() {console.log( this.a );}
 var obj1 = {
 	a: 2,
-	foo: foo1
+	foo: function foo1() {console.log( this.a );}
 };
 obj1.foo()
 var foo1_1 = obj1.foo
 foo1_1()
+var foo1_2 = obj1.foo.bind(obj1)
+foo1_2()
+
+// 1. 硬绑定 简单的辅助绑定函数
+function bind(fn, obj) {
+	return function() {
+		return fn.apply(obj, arguments)
+	}
+}
+
 
