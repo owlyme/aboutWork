@@ -25,3 +25,4 @@ function closure2 () {
 		}, i * 1000)
 	}
 }
+

@@ -34,15 +34,15 @@ var id = "not awesome"
 // obj.coolTimeout()
 
 // function foo1() {console.log( this.a );}
-var obj1 = {
-	a: 2,
-	foo: function foo1() {console.log( this.a );}
-};
-obj1.foo()
-var foo1_1 = obj1.foo
-foo1_1()
-var foo1_2 = obj1.foo.bind(obj1)
-foo1_2()
+// var obj1 = {
+// 	a: 2,
+// 	foo: function foo1() {console.log( this.a );}
+// };
+// obj1.foo()
+// var foo1_1 = obj1.foo
+// foo1_1()
+// var foo1_2 = obj1.foo.bind(obj1)
+// foo1_2()
 
 // 1. 硬绑定 简单的辅助绑定函数
 function bind(fn, obj) {
@@ -51,4 +51,15 @@ function bind(fn, obj) {
 	}
 }
 
+
+function fn1(a,b,c) {
+	console.log(this.a)
+} 
+var a = 2
+var o = { a:3, foo: fn1}
+var p = {a: 4}
+
+o.foo()
+q = (p.foo = o.foo)()
+p.foo()
 
