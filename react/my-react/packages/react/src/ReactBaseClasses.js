@@ -50,6 +50,38 @@ Component.prototype.forceUpdate = function(callback) {
 	this.updater.enqueueForceUpdate(this, callback, 'forceUpdate')
 }
 
+// 弃用的api componentWillUnmount replaceState
+if (__DEV__) {
+	const deprecatedAPIs = {
+	  isMounted: [
+		'isMounted',
+		'Instead, make sure to clean up subscriptions and pending requests in ' +
+		  'componentWillUnmount to prevent memory leaks.',
+	  ],
+	  replaceState: [
+		'replaceState',
+		'Refactor your code to use setState instead (see ' +
+		  'https://github.com/facebook/react/issues/3236).',
+	  ],
+	};
+	const defineDeprecationWarning = function(methodName, info) {
+	  Object.defineProperty(Component.prototype, methodName, {
+		get: function() {
+		  console.warn(
+			'%s(...) is deprecated in plain JavaScript React classes. %s',
+			info[0],
+			info[1],
+		  );
+		  return undefined;
+		},
+	  });
+	};
+	for (const fnName in deprecatedAPIs) {
+	  if (deprecatedAPIs.hasOwnProperty(fnName)) {
+		defineDeprecationWarning(fnName, deprecatedAPIs[fnName]);
+	  }
+	}
+  }
 
 function ComponentDummy() {}
 ComponentDummy.prototype = Component.prototype;
