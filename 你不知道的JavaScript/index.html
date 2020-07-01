@@ -1,0 +1,23 @@
+<html>
+	<head>
+		<script src="https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.15/lodash.js"></script>
+	</head>
+	<script>
+		
+		let obj = {
+			a: 1,
+			arr: [1, 2, {}],
+			obj: {},
+			fn: function() {},
+		}
+		obj.self = obj
+
+
+		let t1 = Date.now();
+		console.log(t1);
+		[...new Array(10000)].forEach(() => {
+			_.cloneDeep(obj)
+		});
+		console.log(Date.now() - t1)
+	</script>
+</html>
