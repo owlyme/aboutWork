@@ -3,8 +3,10 @@ let obj = {
 	arr: [1, 2, {}],
 	obj: {},
 	fn: function() {},
+	c: null,
+	un: undefined
 }
-obj.self = obj
+// obj.self = obj
 
 function deepClone(obj) {
 	let mapProperty = []
@@ -12,7 +14,7 @@ function deepClone(obj) {
 		if (mapProperty.indexOf(obj) != -1) {
 			// 破环
 			return obj
-		} 
+		}
 		if (typeof obj === "object") {
 			// 标记引用型数据
 			mapProperty.push(obj)
@@ -23,13 +25,13 @@ function deepClone(obj) {
 			newObj = obj
 		} else if (Object.prototype.toString.call(obj) === "[object Array]") {
 			newObj = []
-			
+
 			for (let i = 0; i < obj.length; i++) {
 				newObj[i] = clone(obj[i])
 			}
 		} else {
 			newObj = {}
-	
+
 			for (let key in obj) {
 				newObj[key] = clone(obj[key])
 			}
@@ -40,10 +42,19 @@ function deepClone(obj) {
 	return clone(obj)
 }
 
+function JsonCopy(obj) {
+	// function, undefined 类型无法拷贝
+	// 不能打破环
+	if (typeof obj !== "object" || obj === null) {
+		return obj
+	}
+	return JSON.parse(JSON.stringify(obj))
+}
 
-let t1 = Date.now();
-console.log(t1);
-[...new Array(10000)].forEach(() => {
-	deepClone(obj)
-});
-console.log(Date.now() - t1)
+
+
+console.log(JsonCopy(obj))
+
+
+
+
