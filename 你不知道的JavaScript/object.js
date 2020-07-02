@@ -15,14 +15,14 @@ for (var n of randoms) {
   if (pool.length >=10) break;
 }
 
-// let o = {
-//   a: 1,
-//   b: 2
-// }
+let o = {
+  a: 1,
+  b: 2
+}
 
-// for (var key of o) {
-//   console.log(key)
-// }
+for (var key of o) {
+  console.log(key)
+}
 
 // for (var key in o ) {
 //   console.log(key)
