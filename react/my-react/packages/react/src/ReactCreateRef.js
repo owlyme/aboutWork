@@ -1,4 +1,4 @@
-// 创建一个对象
+// 创建一个 拥有current 属性 的对象
 export function createRef() {
 	const refObject = {
 		current: null,
