@@ -99,6 +99,5 @@ const pureComponentPrototype = (PureComponent.prototype = new ComponentDummy())
 pureComponentPrototype.constructor = PureComponent;
 Object.assign(pureComponentPrototype, Component.prototype);
 pureComponentPrototype.isPureReactComponent = true;
-console.log(pureComponentPrototype)
 
 export { Component, PureComponent }
