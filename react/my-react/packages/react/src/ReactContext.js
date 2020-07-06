@@ -5,6 +5,7 @@ import {REACT_PROVIDER_TYPE, REACT_CONTEXT_TYPE} from '../../shared/ReactSymbols
  * @param {*} defaultValue 
  * @param {function} calculateChangedBits return number
  */
+// 
 export function createContext(defaultValue, calculateChangedBits) {
 	if (calculateChangedBits === undefined) {
 		calculateChangedBits = null;
@@ -27,7 +28,7 @@ export function createContext(defaultValue, calculateChangedBits) {
 		$$typeof: REACT_CONTEXT_TYPE,
 		_calculateChangedBits: calculateChangedBits,
 		// 作为支持多个并发渲染器的解决方法，我们将一些渲染器归类为主要渲染器，将其他渲染器归为辅助渲染器。 我们只希望最多有两个并发渲染器：React Native（主要）和Fabric（次要）。 React DOM（主要）和React ART（次要）。 辅助渲染器将其上下文值存储在单独的字段中。
-		//主要渲染器，将其他渲染器归为辅助渲染器
+		// 主要渲染器，将其他渲染器归为辅助渲染器
 		_currentValue: defaultValue,
 		_currentValue2: defaultValue,
 		    // Used to track how many concurrent renderers this context currently
@@ -138,6 +139,4 @@ export function createContext(defaultValue, calculateChangedBits) {
 
 
   return context; 
-
-
 }
