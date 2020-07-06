@@ -137,6 +137,5 @@ export function createContext(defaultValue, calculateChangedBits) {
 	}
 
 
-
   return context; 
 }
