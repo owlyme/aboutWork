@@ -42,3 +42,11 @@ import {
 	useDeferredValue,
 	useOpaqueIdentifier,
   } from './ReactHooks';
+import {withSuspenseConfig} from './ReactBatchConfig';
+import {
+	createElementWithValidation,
+	createFactoryWithValidation,
+	cloneElementWithValidation
+} from "./ReactElementValidator"
+
+
