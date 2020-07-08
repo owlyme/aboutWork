@@ -16,3 +16,8 @@ import {
 	cloneElement,
 	jsxDEV,
   } from './ReactElement'; 
+
+import {setExtraStackFrame} from './ReactDebugCurrentFrame';
+
+
+
