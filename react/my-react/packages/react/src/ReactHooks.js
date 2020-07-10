@@ -13,7 +13,7 @@ import invariant from '../../shared/invariant';
 import {REACT_RESPONDER_TYPE} from '../../shared/ReactSymbols';
 
 import ReactCurrentDispatcher from './ReactCurrentDispatcher';
-import { func } from 'prop-types';
+
 // https://react.docschina.org/docs/hooks-reference.html#usecontext
 
 function resolveDispatcher() {

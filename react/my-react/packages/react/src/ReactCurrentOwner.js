@@ -1,7 +1,7 @@
-import type {Fiber} from 'react-reconciler/src/ReactInternalTypes';
+// import type {Fiber} from 'react-reconciler/src/ReactInternalTypes';
 
 const ReactCurrentOwner = {
-	current: Fiber
+	current: null // Fiber
 }
 
 export default ReactCurrentOwner;
