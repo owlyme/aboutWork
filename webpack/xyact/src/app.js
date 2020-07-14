@@ -2,8 +2,15 @@
 import Didact from './didact';
 
 let Fn = (props) => {
+	debugger
 	return (
 		<ul name="John" style="color: red" ><li>{props.name}</li></ul>
+	)
+}
+let Fn1 = (props) => {
+	debugger
+	return (
+		<ul name="John" style="color: red" ><li>{props.name}</li><li>{props.children}</li></ul>
 	)
 }
 
@@ -33,13 +40,14 @@ class HelloMessage extends Didact.Component {
         Hello {name + "!".repeat(times)}
 
 		<Fn name={flag ? "xxx" : "yyy"} />
+
       </div>
     );
   }
 }
 
 Didact.render(
-  <HelloMessage name="John" />,
+  (<Fn1  name="zzz"><HelloMessage name="John" /></Fn1>),
   document.getElementById('root')
 );
 
