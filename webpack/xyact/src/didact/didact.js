@@ -9,8 +9,6 @@ const isAttribute = name => !isEvent(name) && name !== 'children';
 // childInstances是一个包含元素-子元素实例的数组。
 let rootInstance = null;
 
-
-
 export function render(element, parentDom) {
 	let instance = rootInstance;
 	rootInstance = reconcile(parentDom, instance, element);
@@ -25,34 +23,27 @@ export function reconcile(parentDom, instance, element) {
 	} else if (element == null) {
 		parentDom.removeChild(instance.dom);
 		return null
-	}  else if (instance.publicInstance) {
-		
-		let publicInstance = createPublicInstance(element, instance);
-		let childElement = publicInstance.render();
-
-		updateDomProperties(instance.dom, instance.element.props, childElement.props);
-		let newChildrenInstances = reconcileChildren(instance, childElement);
-
-
-		Object.assign(instance, {
-			element: childElement,
-			childInstances: newChildrenInstances,
-			publicInstance });
-
-
-		return instance;
-
-
-	} else if (instance.element.type === element.type && typeof element.type === 'string') {
+	} else if (instance.element.type !== element.type) {
+		let newInstance = instantiate(element);
+		parentDom.replaceChild(newInstance.dom, instance.dom);
+		return newInstance;
+	} else if (typeof element.type === 'string') {
 		updateDomProperties(instance.dom, instance.element.props, element.props);
 		let newChildrenInstances = reconcileChildren(instance, element);
 		instance.childInstances = newChildrenInstances;
 		instance.element = element;
 		return instance;
-	} else {
-		let newInstance = instantiate(element);
-		parentDom.replaceChild(newInstance.dom, instance.dom);
-		return newInstance;
+	}  else {
+		// 更新 state 和 props
+		instance.publicInstance.props = element.props;
+		let childElement = instance.publicInstance.render();
+		let newInstance = reconcile(parentDom, instance.childInstance, childElement);
+		Object.assign(instance, {
+			dom: newInstance.dom,
+			element,
+			childInstance: newInstance
+		});
+		return instance;
 	}
 }
 
@@ -61,13 +52,11 @@ export function reconcileChildren(instance, element) {
 	let dom = instance.dom;
 	let oldChildInstances = instance.childInstances;
 	let newChildElements = element.props.children || [];
-
 	let maxLength = Math.max(oldChildInstances.length, newChildElements.length);
 
 	for(let i = 0; i< maxLength; i++) {
 		let newElement = newChildElements[i] || null;
 		let oldInstance = oldChildInstances[i] || null;
-
 		newChildInstances.push(reconcile(dom, oldInstance, newElement))
 	}
 
@@ -100,11 +89,11 @@ export function instantiate(element) {
 		let publicInstance = createPublicInstance(element, instance);
 		let childElement = publicInstance.render();
 
-		let {dom, childInstances} = instantiate(childElement);
+		let childInstance = instantiate(childElement);
 		Object.assign(instance, {
-			dom,
+			dom: childInstance.dom,
 			element,
-			childInstances,
+			childInstance,
 			publicInstance });
 
 		return instance;
@@ -112,9 +101,6 @@ export function instantiate(element) {
 }
 
 function updateDomProperties(dom, prevProps, nextProps) {
-	const isEvent = name => name.startsWith("on");
-	const isAttribute = name => !isEvent(name) && name != "children";
-  
   	// preProps Remove
 	// Remove event listeners
 	Object.keys(prevProps).filter(isEvent).forEach(name => {
