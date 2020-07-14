@@ -12,7 +12,7 @@ let rootInstance = null;
 export function render(element, parentDom) {
 	let instance = rootInstance;
 	rootInstance = reconcile(parentDom, instance, element);
-	console.log(rootInstance)
+	console.log(rootInstance);
 }
 
 export function reconcile(parentDom, instance, element) {
@@ -22,12 +22,31 @@ export function reconcile(parentDom, instance, element) {
 		return newInstance;
 	} else if (element == null) {
 		parentDom.removeChild(instance.dom);
+<<<<<<< HEAD
 		return null
 	} else if (instance.element.type !== element.type) {
 		let newInstance = instantiate(element);
 		parentDom.replaceChild(newInstance.dom, instance.dom);
 		return newInstance;
 	} else if (typeof element.type === 'string') {
+=======
+
+		return null;
+	}  else if (instance.publicInstance) {
+		// let publicInstance = createPublicInstance(element, instance);
+		let childElement = instance.publicInstance.render();
+
+		updateDomProperties(instance.dom, instance.element.props, childElement.props);
+		let newChildrenInstances = reconcileChildren(instance, childElement);
+
+		Object.assign(instance, {
+			element,
+			childInstances: newChildrenInstances,
+			publicInstance });
+
+		return instance;
+	} else if (instance.element.type === element.type && typeof element.type === 'string') {
+>>>>>>> 0f5d3636ef712bd11ac961e38f9b2e9079e3b5a8
 		updateDomProperties(instance.dom, instance.element.props, element.props);
 		let newChildrenInstances = reconcileChildren(instance, element);
 		instance.childInstances = newChildrenInstances;
@@ -101,24 +120,29 @@ export function instantiate(element) {
 }
 
 function updateDomProperties(dom, prevProps, nextProps) {
+<<<<<<< HEAD
   	// preProps Remove
+=======
+
+  // preProps Remove
+>>>>>>> 0f5d3636ef712bd11ac961e38f9b2e9079e3b5a8
 	// Remove event listeners
 	Object.keys(prevProps).filter(isEvent).forEach(name => {
 	  const eventType = name.toLowerCase().substring(2);
 	  dom.removeEventListener(eventType, prevProps[name]);
 	});
-  
+
 	// Remove attributes
 	Object.keys(prevProps).filter(isAttribute).forEach(name => {
 	  dom[name] = null;
 	});
-  
+
   	// nextProps Add
 	// Set attributes
 	Object.keys(nextProps).filter(isAttribute).forEach(name => {
 	  dom[name] = nextProps[name];
 	});
-  
+
 	// Add event listeners
 	Object.keys(nextProps).filter(isEvent).forEach(name => {
 	  const eventType = name.toLowerCase().substring(2);

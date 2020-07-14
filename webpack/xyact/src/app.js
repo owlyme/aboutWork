@@ -47,6 +47,7 @@ Didact.render(
 let flag = true;
   const rootDom = document.getElementById("root");
 
+<<<<<<< HEAD
   function tick() {
 	const time = new Date().toLocaleTimeString();
 	const clockElement =flag ?
@@ -56,5 +57,16 @@ let flag = true;
 	Didact.render(<Fn name={flag ? "xxx" : "yyy"} />, rootDom);
   }
   
+=======
+//   function tick() {
+// 	const time = new Date().toLocaleTimeString();
+// 	const clockElement =flag ?
+// 	(<ul name="John" style="color: red" ><li>123</li><li>456</li></ul>) :
+// 	(<ul name="John" style="color: blue" ><li>456</li></ul>);
+// 	flag = !flag
+// 	Didact.render(clockElement, rootDom);
+//   }
+
+>>>>>>> 0f5d3636ef712bd11ac961e38f9b2e9079e3b5a8
 //   tick();
 //   setInterval(tick, 1000);
