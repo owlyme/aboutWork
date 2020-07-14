@@ -18,6 +18,7 @@ class HelloMessage extends Didact.Component {
   render() {
     const name = this.props.name;
     const times = this.state.count;
+    debugger
     return (
       <div onClick={e => this.handleClick()}>
         Hello {name + "!".repeat(times)}
@@ -43,6 +44,6 @@ Didact.render(
 // 	flag = !flag
 // 	Didact.render(clockElement, rootDom);
 //   }
-  
+
 //   tick();
 //   setInterval(tick, 1000);

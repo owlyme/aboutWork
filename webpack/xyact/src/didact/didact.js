@@ -9,12 +9,10 @@ const isAttribute = name => !isEvent(name) && name !== 'children';
 // childInstances是一个包含元素-子元素实例的数组。
 let rootInstance = null;
 
-
-
 export function render(element, parentDom) {
 	let instance = rootInstance;
 	rootInstance = reconcile(parentDom, instance, element);
-	console.log(rootInstance)
+	console.log(rootInstance);
 }
 
 export function reconcile(parentDom, instance, element) {
@@ -24,25 +22,21 @@ export function reconcile(parentDom, instance, element) {
 		return newInstance;
 	} else if (element == null) {
 		parentDom.removeChild(instance.dom);
-		return null
+
+		return null;
 	}  else if (instance.publicInstance) {
-		
-		let publicInstance = createPublicInstance(element, instance);
-		let childElement = publicInstance.render();
+		// let publicInstance = createPublicInstance(element, instance);
+		let childElement = instance.publicInstance.render();
 
 		updateDomProperties(instance.dom, instance.element.props, childElement.props);
 		let newChildrenInstances = reconcileChildren(instance, childElement);
 
-
 		Object.assign(instance, {
-			element: childElement,
+			element,
 			childInstances: newChildrenInstances,
 			publicInstance });
 
-
 		return instance;
-
-
 	} else if (instance.element.type === element.type && typeof element.type === 'string') {
 		updateDomProperties(instance.dom, instance.element.props, element.props);
 		let newChildrenInstances = reconcileChildren(instance, element);
@@ -112,27 +106,25 @@ export function instantiate(element) {
 }
 
 function updateDomProperties(dom, prevProps, nextProps) {
-	const isEvent = name => name.startsWith("on");
-	const isAttribute = name => !isEvent(name) && name != "children";
-  
-  	// preProps Remove
+
+  // preProps Remove
 	// Remove event listeners
 	Object.keys(prevProps).filter(isEvent).forEach(name => {
 	  const eventType = name.toLowerCase().substring(2);
 	  dom.removeEventListener(eventType, prevProps[name]);
 	});
-  
+
 	// Remove attributes
 	Object.keys(prevProps).filter(isAttribute).forEach(name => {
 	  dom[name] = null;
 	});
-  
+
   	// nextProps Add
 	// Set attributes
 	Object.keys(nextProps).filter(isAttribute).forEach(name => {
 	  dom[name] = nextProps[name];
 	});
-  
+
 	// Add event listeners
 	Object.keys(nextProps).filter(isEvent).forEach(name => {
 	  const eventType = name.toLowerCase().substring(2);
