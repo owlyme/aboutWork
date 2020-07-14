@@ -101,12 +101,7 @@ export function instantiate(element) {
 }
 
 function updateDomProperties(dom, prevProps, nextProps) {
-<<<<<<< HEAD
   	// preProps Remove
-=======
-
-  // preProps Remove
->>>>>>> 0f5d3636ef712bd11ac961e38f9b2e9079e3b5a8
 	// Remove event listeners
 	Object.keys(prevProps).filter(isEvent).forEach(name => {
 	  const eventType = name.toLowerCase().substring(2);
