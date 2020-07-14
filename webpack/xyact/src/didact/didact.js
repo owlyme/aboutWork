@@ -22,31 +22,12 @@ export function reconcile(parentDom, instance, element) {
 		return newInstance;
 	} else if (element == null) {
 		parentDom.removeChild(instance.dom);
-<<<<<<< HEAD
 		return null
 	} else if (instance.element.type !== element.type) {
 		let newInstance = instantiate(element);
 		parentDom.replaceChild(newInstance.dom, instance.dom);
 		return newInstance;
 	} else if (typeof element.type === 'string') {
-=======
-
-		return null;
-	}  else if (instance.publicInstance) {
-		// let publicInstance = createPublicInstance(element, instance);
-		let childElement = instance.publicInstance.render();
-
-		updateDomProperties(instance.dom, instance.element.props, childElement.props);
-		let newChildrenInstances = reconcileChildren(instance, childElement);
-
-		Object.assign(instance, {
-			element,
-			childInstances: newChildrenInstances,
-			publicInstance });
-
-		return instance;
-	} else if (instance.element.type === element.type && typeof element.type === 'string') {
->>>>>>> 0f5d3636ef712bd11ac961e38f9b2e9079e3b5a8
 		updateDomProperties(instance.dom, instance.element.props, element.props);
 		let newChildrenInstances = reconcileChildren(instance, element);
 		instance.childInstances = newChildrenInstances;
