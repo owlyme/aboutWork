@@ -2,13 +2,11 @@
 import Didact from './didact';
 
 let Fn = (props) => {
-	debugger
 	return (
 		<ul name="John" style="color: red" ><li>{props.name}</li></ul>
 	)
 }
 let Fn1 = (props) => {
-	debugger
 	return (
 		<ul name="John" style="color: red" ><li>{props.name}</li><li>{props.children}</li></ul>
 	)
@@ -46,23 +44,25 @@ class HelloMessage extends Didact.Component {
   }
 }
 
-Didact.render(
-  (<Fn1  name="zzz"><HelloMessage name="John" /></Fn1>),
-  document.getElementById('root')
-);
+// Didact.render(
+//   (<Fn1  name="zzz"><HelloMessage name="John" /></Fn1>),
+//   document.getElementById('root')
+// );
 
 
 let flag = true;
   const rootDom = document.getElementById("root");
 
-  function tick() {
+function tick() {
 	const time = new Date().toLocaleTimeString();
 	const clockElement =flag ?
-	(<ul name="John" style="color: red" ><li>123</li><li>456</li></ul>) :
-	(<ul name="John" style="color: blue" ><li>456</li></ul>);
-	flag = !flag
-	Didact.render(<Fn name={flag ? "xxx" : "yyy"} />, rootDom);
-  }
-  
-//   tick();
-//   setInterval(tick, 1000);
+	(<ul name="John" style={{color: "red"}} ><li>123</li><li>456</li></ul>) :
+  (<ul name="John" style="color: blue" ><li>456</li></ul>);
+
+  flag = !flag
+
+	Didact.render(clockElement, rootDom);
+}
+
+  tick();
+  setInterval(tick, 1000);
