@@ -31,23 +31,20 @@ class HelloMessage extends Didact.Component {
 
   render() {
     const name = this.props.name;
-	const times = this.state.count;
-	const flag = this.state.flag
+    const times = this.state.count;
+    const flag = this.state.flag
     return (
       <div onClick={e => this.handleClick()}>
         Hello {name + "!".repeat(times)}
-
-		<Fn name={flag ? "xxx" : "yyy"} />
-
       </div>
     );
   }
 }
 
-// Didact.render(
-//   (<Fn1  name="zzz"><HelloMessage name="John" /></Fn1>),
-//   document.getElementById('root')
-// );
+Didact.render(
+ <Fn name="xxxxx" />,
+  document.getElementById('root')
+);
 
 
 let flag = true;
@@ -56,13 +53,12 @@ let flag = true;
 function tick() {
 	const time = new Date().toLocaleTimeString();
 	const clockElement =flag ?
-	(<ul name="John" style={{color: "red"}} ><li>123</li><li>456</li></ul>) :
-  (<ul name="John" style="color: blue" ><li>456</li></ul>);
+	(<ul name="John" style={{color: "red"}} onClick={() => tick()} >14562</ul>) :
+  (<ul name="John" style="color: blue" onClick={() => tick()}  >333333</ul>);
 
   flag = !flag
 
 	Didact.render(clockElement, rootDom);
 }
 
-  tick();
-  setInterval(tick, 1000);
+// 
