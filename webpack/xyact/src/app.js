@@ -1,68 +1,119 @@
-/** @jsx Didact.createElement */
-import Didact from './didact';
+import React, {Component, useState}from "react"
+import ReactDom from "react-dom"
 
-let Fn = (props) => {
-	return (
-		<ul name="John" style="color: red" ><li>{props.name}</li></ul>
-	)
-}
-let Fn1 = (props) => {
-	return (
-		<ul name="John" style="color: red" ><li>{props.name}</li><li>{props.children}</li></ul>
-	)
+
+
+class Square extends Component {
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    let style={height: 20,width: 20}
+    return (
+      <button style={style}
+        onClick={this.props.onPlay}>
+        {this.props.value}
+      </button>
+    )
+  }
 }
 
-class HelloMessage extends Didact.Component {
+class Brand extends Component {
   constructor(props) {
     super(props);
     this.state = {
-	  count: 1,
-	  flag: false
-    };
+      player: "X"
+    }
   }
 
-  handleClick() {
-	  console.log('click time')
-    this.setState({
-	  count: this.state.count + 1,
-	  flag: !this.state.flag
-    });
+
+
+  renderSquare(i, index_row, index_col) {
+    return <Square key={index_col} value={i} onPlay={() => this.palyKey(i, index_row, index_col)} />
+  }
+
+  palyKey(i, index_row, index_col) {
+    if (i == "") {
+      let player = this.state.player;
+      let list = this.props.list;;
+      list[index_row][index_col] = player
+      player = player === 'X' ? "Y" : "X"
+      this.setState({
+        player
+      })
+
+      this.props.onChange(JSON.parse(JSON.stringify(list)))
+    }
   }
 
   render() {
-    const name = this.props.name;
-	const times = this.state.count;
-	const flag = this.state.flag
+    const status =  'Next player: ' + this.state.player;
+    const list = this.props.list;
     return (
-      <div onClick={e => this.handleClick()}>
-        Hello {name + "!".repeat(times)}
-
-		<Fn name={flag ? "xxx" : "yyy"} />
-
+      <div>
+        <div>{status}</div>
+        {
+          list.map((row, index_row) =>
+            <div key={index_row}>{
+              row.map((col, index_col)=> { return this.renderSquare(col, index_row, index_col) } )
+            }</div>
+          )
+        }
       </div>
-    );
+    )
   }
 }
 
-// Didact.render(
-//   (<Fn1  name="zzz"><HelloMessage name="John" /></Fn1>),
-//   document.getElementById('root')
-// );
+class Game extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      history: [],
+      list: [
+        ["","",""],
+        ["","",""],
+        ["","",""]
+      ]
+    }
+  }
 
+  onChange(step) {
+    let history = this.state.history
+    history.push(step)
+    console.log(history)
+    this.setState({history})
+  }
 
-let flag = true;
-  const rootDom = document.getElementById("root");
+  goBack(index){
+    let list = this.state.history[index];
+    let history = this.state.history.splice(0, index)
+    this.setState({list, history})
+  }
 
-function tick() {
-	const time = new Date().toLocaleTimeString();
-	const clockElement =flag ?
-	(<ul name="John" style={{color: "red"}} ><li>123</li><li>456</li></ul>) :
-  (<ul name="John" style="color: blue" ><li>456</li></ul>);
+  render() {
+    return (
+      <div>
+        <Brand list={this.state.list} onChange={this.onChange.bind(this)} />
+        <div>
+          steps list:
+          <ul>
+          {
+            this.state.history.map(
+              (i, index)=> <li key={index} onClick={() => this.goBack(index)}>step{index + 1}</li>
+            )
+          }
+          </ul>
+        </div>
+      </div>
 
-  flag = !flag
-
-	Didact.render(clockElement, rootDom);
+    )
+  }
 }
 
-  tick();
-  setInterval(tick, 1000);
+
+const element = <Game />
+
+let container = document.getElementById("root");
+
+ReactDom.render(element, container)
+

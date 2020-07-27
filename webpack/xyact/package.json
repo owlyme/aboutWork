@@ -22,6 +22,8 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "didact": "^2.0.1"
+    "didact": "^2.0.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
   }
 }
