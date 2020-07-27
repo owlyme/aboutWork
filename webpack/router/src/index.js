@@ -164,7 +164,130 @@ class HistoryRouter {
 
 		this.init(route);
 	}
+	init(route) {
+		this.setRouterMap(route);
+		this.eventListener();
+	}
 
+	eventListener() {
+		window.addEventListener('load', ()=> this.refresh("loaded"), false);
+		window.addEventListener('popstate', ()=> this.refresh("popstate"), false);
+	}
+
+	setRouterMap (route, parentFn) {
+		route.forEach((item) => {
+			let key = item.path;
+			let fn = () => {
+				if (parentFn) parentFn();
+				item.component()
+			}
+
+			this.route(key, fn);
+
+			if (item.children && Array.isArray(item.children)) {
+				this.setRouterMap(item.children, item.component)
+			}
+		})
+	}
+
+	route(path, callback) {
+		this.routers[path] = callback || function() {};
+	}
+
+	refresh() {
+		let currentUrl = this.currentUrl = location.hash.slice(1) || "/";
+
+		let nextStepRedy = false;
+		let from = this.history[this.currentIndex] || null
+		let to = currentUrl
+		let next = () => nextStepRedy = true;
+
+		this.runBeforeEachHooks(from, to, next)
+		if (!this.beforeEachHooks.length) {
+			next()
+		}
+		if (nextStepRedy) {
+			if (!this.isBack && !this.isReplace && !this.isForward) {
+				this.history.push(currentUrl);
+				this.currentIndex++;
+			}
+
+			if (this.routers[currentUrl]) {
+				this.routers[currentUrl]();
+			};
+
+			this.runAfterEachHooks(from, to, next);
+		}
+
+		this.isBack = false;
+		this.isBack = false;
+		this.isForward = false;
+	}
+
+	push(path) {
+		this.history.splice(1, this.history.length)
+		this.currentIndex = this.history.length;
+
+		window.history.pushState(path)
+	}
+
+	replace(path) {
+		this.isReplace = true;
+
+		this.history[this.currentIndex] = path
+
+		window.history.replaceState(path)
+	}
+
+	back() {
+		this.isBack = true;
+		this.currentIndex <= 0
+		? (this.currentIndex = 0)
+		: (this.currentIndex = this.currentIndex - 1);
+
+		let currentUrl = this.history[this.currentIndex];
+		location.hash = "#"+ currentUrl;
+	}
+
+	forward() {
+		this.isForward = true;
+		this.currentIndex >= this.history.length
+		? (this.currentIndex = this.history.length-1)
+		: (this.currentIndex = this.currentIndex + 1);
+
+		let currentUrl = this.history[this.currentIndex];
+		location.hash = "#"+ currentUrl;
+	}
+	go(index) {
+		let currentIndex = this.currentIndex = this.currentIndex + index;
+
+		if(currentIndex < 0) {
+			currentIndex = 0
+		} else if (currentIndex >= this.history.length) {
+			currentIndex = this.history.length - 1
+		}
+
+		this.currentIndex = currentIndex;
+		let currentUrl = this.history[this.currentIndex];
+		location.hash = "#"+ currentUrl;
+	}
+
+	beforeEach(fn) {
+		this.beforeEachHooks.push(fn)
+	}
+	runBeforeEachHooks(from, to, next) {
+		this.beforeEachHooks.forEach((callback) => {
+			callback(from, to, next)
+		})
+	}
+	afterEach(fn) {
+		this.afterEachHooks.push(fn)
+	}
+	runAfterEachHooks(from, to, next) {
+		this.afterEachHooks.forEach((callback) => {
+			callback(from, to, next)
+		})
+	}
 
 }
 
@@ -183,7 +306,7 @@ const route = [
 				component: () => { console.log("/news/child"); pageBC() },
 			},
 		]
-	},
+	}
 ]
 
 
