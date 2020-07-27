@@ -1,51 +1,5 @@
 /** @jsx Didact.createElement */
-import Didact from './didact';
-
-let Fn = (props) => {
-	return (
-		<ul name="John" style="color: red" ><li>{props.name}</li></ul>
-	)
-}
-let Fn1 = (props) => {
-	return (
-		<ul name="John" style="color: red" ><li>{props.name}</li><li>{props.children}</li></ul>
-	)
-}
-
-class HelloMessage extends Didact.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-	  count: 1,
-	  flag: false
-    };
-  }
-
-  handleClick() {
-	  console.log('click time')
-    this.setState({
-	  count: this.state.count + 1,
-	  flag: !this.state.flag
-    });
-  }
-
-  render() {
-    const name = this.props.name;
-    const times = this.state.count;
-    const flag = this.state.flag
-    return (
-      <div onClick={e => this.handleClick()}>
-        Hello {name + "!".repeat(times)}
-      </div>
-    );
-  }
-}
-
-Didact.render(
- <Fn name="xxxxx" />,
-  document.getElementById('root')
-);
-
+import Didact from './didact/didact';
 
 let flag = true;
   const rootDom = document.getElementById("root");
@@ -60,5 +14,17 @@ function tick() {
 
 	Didact.render(clockElement, rootDom);
 }
-
-// 
+// tick() 
+function Counter() {
+  const [state, setState] = Didact.useState(1)
+  return (
+    <h1 onClick={() => setState(c => c + 1)}>
+      Count: {state}
+    </h1>
+  )
+}
+const element = (<div>
+  <Counter />
+  <Counter />
+  </div>)
+Didact.render(element, rootDom);

@@ -33,7 +33,6 @@ export function schedule(task) {
   requestIdleCallback(performWork)
 }
 
-
 export function performWork(deadline) {
   workLoop(deadline);
 
@@ -56,6 +55,7 @@ export function workLoop(deadline) {
     commitAllWork(pendingCommit);
   }
 }
+
 export function resetNextUnitOfWork() {
   const update = updateQueue.shift();
   if (!update) {
@@ -76,7 +76,6 @@ export function resetNextUnitOfWork() {
     props: update.newProps || root.props,
     alternate: root
   }
-
 };
 
 function getRoot(fiber) {
