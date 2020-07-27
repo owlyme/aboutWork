@@ -31,9 +31,6 @@ class HashRouter {
 	}
 
 	setRouterMap (route, parentFn) {
-		for (let key in route) {
-			this.route(key, route[key])
-		}
 		route.forEach((item) => {
 			let key = item.path;
 			let fn = () => {
@@ -75,7 +72,7 @@ class HashRouter {
 				this.routers[currentUrl]();
 			};
 
-			this.runBeforeEachHooks(from, to, next);
+			this.runAfterEachHooks(from, to, next);
 		}
 
 		this.isBack = false;
