@@ -113,6 +113,19 @@ class HashRouter {
 		let currentUrl = this.history[this.currentIndex];
 		location.hash = "#"+ currentUrl;
 	}
+	go(index) {
+		let currentIndex = this.currentIndex = this.currentIndex + index;
+
+		if(currentIndex < 0) {
+			currentIndex = 0
+		} else if (currentIndex >= this.history.length) {
+			currentIndex = this.history.length - 1
+		}
+
+		this.currentIndex = currentIndex;
+		let currentUrl = this.history[this.currentIndex];
+		location.hash = "#"+ currentUrl;
+	}
 
 	beforeEach(fn) {
 		this.beforeEachHooks.push(fn)
@@ -131,6 +144,30 @@ class HashRouter {
 		})
 	}
 }
+
+class HistoryRouter {
+	constructor (route) {
+		this.routers = {};
+		this.history = [];
+		this.currentIndex = this.history.length -1 ;
+		this.currentUrl = '';
+
+		this.isBack = false;
+		this.isReplace = false;
+		this.isForward = false;
+
+		this.beforeEachHooks = []
+		this.afterEachHooks = []
+
+		this.mode = 'hash'
+		this.refresh = this.refresh.bind(this);
+
+		this.init(route);
+	}
+
+
+}
+
 
 const route = [
 	{
