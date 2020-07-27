@@ -4,9 +4,13 @@ class HashRouter {
 	constructor (route) {
 		this.routers = {};
 		this.history = [];
-		this.currentIndex = -1;
-		this.isBack = false;
+		this.currentIndex = this.history.length -1 ;
 		this.currentUrl = '';
+
+		this.isBack = false;
+		this.isReplace = false;
+		this.isForward = false;
+
 		this.mode = 'hash'
 		this.refresh = this.refresh.bind(this);
 
@@ -19,10 +23,10 @@ class HashRouter {
 	}
 
 	eventListener() {
-		window.addEventListener('load', this.refresh, false);
-		window.addEventListener('hashchange', this.refresh, false);
+		window.addEventListener('load', ()=> this.refresh("loaded"), false);
+		window.addEventListener('hashchange', ()=> this.refresh("hashChanged"), false);
 	}
-	
+
 	setRouterMap (route, parentFn) {
 		for (let key in route) {
 			this.route(key, route[key])
@@ -47,31 +51,57 @@ class HashRouter {
 
 	refresh() {
 		let currentUrl = this.currentUrl = location.hash.slice(1) || "/";
-		if (!this.isBack && this.routers[currentUrl]) {
+
+		if (!this.isBack && !this.isReplace && !this.isForward) {
 			this.history.push(currentUrl);
 			this.currentIndex++;
+		}
+
+		if (this.routers[currentUrl]) {
 			this.routers[currentUrl]();
 		};
-		this.isBack = false
+
+		this.isBack = false;
+		this.isBack = false;
+		this.isForward = false;
 	}
+
+
 
 	push(path) {
+		let _path = /#/.test(path) ? path : `#${path}`
 
+		this.history.splice(1, this.history.length)
+		this.currentIndex = this.history.length;
+		location.hash = _path
 	}
 
-	replace() {
-
+	replace(path) {
+		this.isReplace = true;
+		let _path = /#/.test(path) ? path : `#${path}`
+		this.history[this.currentIndex] = _path
+		location.hash = _path
 	}
 
 	back() {
-		this.isBack = true
-		let index = this.currentIndex <= 0
+		this.isBack = true;
+		this.currentIndex <= 0
 		? (this.currentIndex = 0)
 		: (this.currentIndex = this.currentIndex - 1);
 
-		let currentUrl = this.history[index];
+		let currentUrl = this.history[this.currentIndex];
 		location.hash = "#"+ currentUrl;
-		this.routers[currentUrl]()
+
+	}
+
+	forward() {
+		this.isForward = true;
+		this.currentIndex >= this.history.length
+		? (this.currentIndex = this.history.length-1)
+		: (this.currentIndex = this.currentIndex + 1);
+
+		let currentUrl = this.history[this.currentIndex];
+		location.hash = "#"+ currentUrl;
 	}
 }
 
