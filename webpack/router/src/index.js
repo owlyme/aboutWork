@@ -245,8 +245,7 @@ class HistoryRouter {
 		? (this.currentIndex = 0)
 		: (this.currentIndex = this.currentIndex - 1);
 
-		let currentUrl = this.history[this.currentIndex];
-		location.hash = "#"+ currentUrl;
+		window.history.back()
 	}
 
 	forward() {
@@ -256,7 +255,7 @@ class HistoryRouter {
 		: (this.currentIndex = this.currentIndex + 1);
 
 		let currentUrl = this.history[this.currentIndex];
-		location.hash = "#"+ currentUrl;
+		window.history.forward()
 	}
 	go(index) {
 		let currentIndex = this.currentIndex = this.currentIndex + index;
@@ -266,6 +265,7 @@ class HistoryRouter {
 		} else if (currentIndex >= this.history.length) {
 			currentIndex = this.history.length - 1
 		}
+		window.history.forward(current)
 
 		this.currentIndex = currentIndex;
 		let currentUrl = this.history[this.currentIndex];
