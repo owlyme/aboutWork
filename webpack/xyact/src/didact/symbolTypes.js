@@ -1,1 +1,5 @@
 export const TEXT_ELEMENT = 'TEXT ELEMENT';
+
+export const HOST_ROOT = "HOST_ROOT"
+export const HOST_COMPONENT = "HOST_COMPONENT";
+export const CLASS_COMPONENT = "CLASS_COMPONENT";
