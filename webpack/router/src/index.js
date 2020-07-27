@@ -1,3 +1,5 @@
+// https://juejin.im/post/5ac61da66fb9a028c71eae1b#heading-9
+
 class HashRouter {
 	constructor (route) {
 		this.routers = {};
@@ -21,10 +23,22 @@ class HashRouter {
 		window.addEventListener('hashchange', this.refresh, false);
 	}
 	
-	setRouterMap (route) {
+	setRouterMap (route, parentFn) {
 		for (let key in route) {
 			this.route(key, route[key])
 		}
+		route.forEach((item) => {
+			let key = item.path;
+			let fn = () => {
+				if (parentFn) parentFn();
+				item.component()
+			}
+			this.route(key, fn);
+
+			if (item.children && Array.isArray(item.children)) {
+				this.setRouterMap(item.children, item.component)
+			}
+		})
 	}
 
 	route(path, callback) {
@@ -61,10 +75,23 @@ class HashRouter {
 	}
 }
 
-const route = {
-	"/": () => { console.log("/"); pageA() },
-	"/news": () => {console.log("/news"); pageB() }
-}
+const route = [
+	{
+		path: "/",
+		component: () => { console.log("/"); pageA() },
+	},
+	{
+		path: "/news",
+		component: () => {console.log("/news"); pageB() },
+		children: [
+			{
+				path: "/news/child",
+				component: () => { console.log("/news/child"); pageBC() },
+			},
+		]
+	},
+]
+
 
 window.Router = new HashRouter(route);
 
@@ -74,5 +101,9 @@ function pageA(){
 };
 function pageB(){
 	var div = document.querySelector('#content');
-	div.innerHTML = '<h2>这是新闻页</h2>';
+	div.innerHTML = '<h2>这是新闻页</h2><div id="content-1"></div>';
+};
+function pageBC(){
+	var div = document.querySelector('#content-1');
+	div.innerHTML = '<h3>这是新闻的详情页</h3>';
 };
