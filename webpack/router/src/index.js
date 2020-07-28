@@ -171,6 +171,8 @@ class HistoryRouter {
 
 	eventListener() {
 		window.addEventListener('load', ()=> this.refresh("loaded"), false);
+		// 需要注意的是调用history.pushState()或history.replaceState()不会触发popstate事件。
+		// 只有在做出浏览器动作时，才会触发该事件，如用户点击浏览器的回退按钮（或者在Javascript代码中调用history.back()或者history.forward()方法）
 		window.addEventListener('popstate', ()=> this.refresh("popstate"), false);
 	}
 
@@ -194,8 +196,9 @@ class HistoryRouter {
 		this.routers[path] = callback || function() {};
 	}
 
-	refresh() {
-		let currentUrl = this.currentUrl = location.hash.slice(1) || "/";
+	refresh(status) {
+		console.log("status", status);
+		let currentUrl = this.currentUrl = location.pathname
 
 		let nextStepRedy = false;
 		let from = this.history[this.currentIndex] || null
@@ -227,16 +230,23 @@ class HistoryRouter {
 	push(path) {
 		this.history.splice(1, this.history.length)
 		this.currentIndex = this.history.length;
-
-		window.history.pushState(path)
+		let state = {
+			index: this.currentIndex
+		}
+		
+		window.history.pushState(state, '', path)
+		this.refresh("pushState")
 	}
 
 	replace(path) {
 		this.isReplace = true;
 
 		this.history[this.currentIndex] = path
-
-		window.history.replaceState(path)
+		let state = {
+			index: this.currentIndex
+		}
+		window.history.replaceState(state, '', path)
+		this.refresh("preplaceState")
 	}
 
 	back() {
@@ -254,22 +264,10 @@ class HistoryRouter {
 		? (this.currentIndex = this.history.length-1)
 		: (this.currentIndex = this.currentIndex + 1);
 
-		let currentUrl = this.history[this.currentIndex];
 		window.history.forward()
 	}
 	go(index) {
-		let currentIndex = this.currentIndex = this.currentIndex + index;
-
-		if(currentIndex < 0) {
-			currentIndex = 0
-		} else if (currentIndex >= this.history.length) {
-			currentIndex = this.history.length - 1
-		}
-		window.history.forward(current)
-
-		this.currentIndex = currentIndex;
-		let currentUrl = this.history[this.currentIndex];
-		location.hash = "#"+ currentUrl;
+		window.history.go(index)
 	}
 
 	beforeEach(fn) {
@@ -310,7 +308,7 @@ const route = [
 ]
 
 
-window.Router = new HashRouter(route);
+window.Router = new HistoryRouter(route);
 
 function pageA(){
 	var div = document.querySelector('#content');
