@@ -82,8 +82,8 @@ class HashRouter {
 
 	push(path) {
 		let _path = /#/.test(path) ? path : `#${path}`
-		this.history.splice(1, this.history.length)
-		this.currentIndex = this.history.length;
+		this.history.splice(this.currentIndex + 1, this.history.length)
+		this.currentIndex = this.history.length - 1;
 		location.hash = _path
 	}
 
@@ -197,20 +197,31 @@ class HistoryRouter {
 	}
 
 	refresh(status) {
-		console.log("status", status);
-		let currentUrl = this.currentUrl = location.pathname
+		let currentUrl = null
+		if (this.isGo) {
+			currentUrl = this.currentUrl = status
+		} else {
+			currentUrl = this.currentUrl = location.pathname
+		}
 
 		let nextStepRedy = false;
 		let from = this.history[this.currentIndex] || null
 		let to = currentUrl
 		let next = () => nextStepRedy = true;
 
+		if (this.isBack) {
+			from = this.history[this.currentIndex + 1] || null
+		}
+		if (this.isForward) {
+			from = this.history[this.currentIndex - 1] || null
+		}
+
 		this.runBeforeEachHooks(from, to, next)
 		if (!this.beforeEachHooks.length) {
 			next()
 		}
 		if (nextStepRedy) {
-			if (!this.isBack && !this.isReplace && !this.isForward) {
+			if (!this.isBack && !this.isReplace && !this.isForward && !this.isGo) {
 				this.history.push(currentUrl);
 				this.currentIndex++;
 			}
@@ -222,14 +233,17 @@ class HistoryRouter {
 			this.runAfterEachHooks(from, to, next);
 		}
 
-		this.isBack = false;
+
 		this.isBack = false;
 		this.isForward = false;
+		this.isGo = false;
+
+		console.log("status", status, this);
 	}
 
 	push(path) {
-		this.history.splice(1, this.history.length)
-		this.currentIndex = this.history.length;
+		this.history.splice(this.currentIndex + 1, this.history.length)
+		this.currentIndex = this.history.length-1;
 		let state = {
 			index: this.currentIndex
 		}
@@ -267,7 +281,22 @@ class HistoryRouter {
 		window.history.forward()
 	}
 	go(index) {
+		// window.history.go 会导致页面刷新
 		window.history.go(index)
+
+		// this.isGo = true;
+		// let currentIndex = this.currentIndex = this.currentIndex + index;
+
+		// if(currentIndex < 0) {
+		// 	currentIndex = 0
+		// } else if (currentIndex >= this.history.length) {
+		// 	currentIndex = this.history.length - 1
+		// }
+
+		// this.currentIndex = currentIndex;
+		// let currentUrl = this.history[this.currentIndex];
+
+		// this.refresh(currentUrl)
 	}
 
 	beforeEach(fn) {
