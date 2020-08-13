@@ -82,8 +82,8 @@ class HashRouter {
 
 	push(path) {
 		let _path = /#/.test(path) ? path : `#${path}`
-		this.history.splice(1, this.history.length)
-		this.currentIndex = this.history.length;
+		this.history.splice(this.currentIndex + 1, this.history.length)
+		this.currentIndex = this.history.length - 1;
 		location.hash = _path
 	}
 
@@ -171,6 +171,8 @@ class HistoryRouter {
 
 	eventListener() {
 		window.addEventListener('load', ()=> this.refresh("loaded"), false);
+		// 需要注意的是调用history.pushState()或history.replaceState()不会触发popstate事件。
+		// 只有在做出浏览器动作时，才会触发该事件，如用户点击浏览器的回退按钮（或者在Javascript代码中调用history.back()或者history.forward()方法）
 		window.addEventListener('popstate', ()=> this.refresh("popstate"), false);
 	}
 
@@ -194,20 +196,32 @@ class HistoryRouter {
 		this.routers[path] = callback || function() {};
 	}
 
-	refresh() {
-		let currentUrl = this.currentUrl = location.hash.slice(1) || "/";
+	refresh(status) {
+		let currentUrl = null
+		if (this.isGo) {
+			currentUrl = this.currentUrl = status
+		} else {
+			currentUrl = this.currentUrl = location.pathname
+		}
 
 		let nextStepRedy = false;
 		let from = this.history[this.currentIndex] || null
 		let to = currentUrl
 		let next = () => nextStepRedy = true;
 
+		if (this.isBack) {
+			from = this.history[this.currentIndex + 1] || null
+		}
+		if (this.isForward) {
+			from = this.history[this.currentIndex - 1] || null
+		}
+
 		this.runBeforeEachHooks(from, to, next)
 		if (!this.beforeEachHooks.length) {
 			next()
 		}
 		if (nextStepRedy) {
-			if (!this.isBack && !this.isReplace && !this.isForward) {
+			if (!this.isBack && !this.isReplace && !this.isForward && !this.isGo) {
 				this.history.push(currentUrl);
 				this.currentIndex++;
 			}
@@ -219,24 +233,34 @@ class HistoryRouter {
 			this.runAfterEachHooks(from, to, next);
 		}
 
-		this.isBack = false;
+
 		this.isBack = false;
 		this.isForward = false;
+		this.isGo = false;
+
+		console.log("status", status, this);
 	}
 
 	push(path) {
-		this.history.splice(1, this.history.length)
-		this.currentIndex = this.history.length;
-
-		window.history.pushState(path)
+		this.history.splice(this.currentIndex + 1, this.history.length)
+		this.currentIndex = this.history.length-1;
+		let state = {
+			index: this.currentIndex
+		}
+		
+		window.history.pushState(state, '', path)
+		this.refresh("pushState")
 	}
 
 	replace(path) {
 		this.isReplace = true;
 
 		this.history[this.currentIndex] = path
-
-		window.history.replaceState(path)
+		let state = {
+			index: this.currentIndex
+		}
+		window.history.replaceState(state, '', path)
+		this.refresh("preplaceState")
 	}
 
 	back() {
@@ -254,22 +278,25 @@ class HistoryRouter {
 		? (this.currentIndex = this.history.length-1)
 		: (this.currentIndex = this.currentIndex + 1);
 
-		let currentUrl = this.history[this.currentIndex];
 		window.history.forward()
 	}
 	go(index) {
-		let currentIndex = this.currentIndex = this.currentIndex + index;
+		// window.history.go 会导致页面刷新
+		window.history.go(index)
 
-		if(currentIndex < 0) {
-			currentIndex = 0
-		} else if (currentIndex >= this.history.length) {
-			currentIndex = this.history.length - 1
-		}
-		window.history.forward(current)
+		// this.isGo = true;
+		// let currentIndex = this.currentIndex = this.currentIndex + index;
 
-		this.currentIndex = currentIndex;
-		let currentUrl = this.history[this.currentIndex];
-		location.hash = "#"+ currentUrl;
+		// if(currentIndex < 0) {
+		// 	currentIndex = 0
+		// } else if (currentIndex >= this.history.length) {
+		// 	currentIndex = this.history.length - 1
+		// }
+
+		// this.currentIndex = currentIndex;
+		// let currentUrl = this.history[this.currentIndex];
+
+		// this.refresh(currentUrl)
 	}
 
 	beforeEach(fn) {
@@ -310,7 +337,7 @@ const route = [
 ]
 
 
-window.Router = new HashRouter(route);
+window.Router = new HistoryRouter(route);
 
 function pageA(){
 	var div = document.querySelector('#content');
