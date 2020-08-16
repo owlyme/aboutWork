@@ -34,9 +34,9 @@ let product = {
 let total = 0
 
 let effect = () => {total = product.price * product.quanity}
-
 effect()
 console.log(total)
+
 track(product, 'price')
 
 product.price = 4

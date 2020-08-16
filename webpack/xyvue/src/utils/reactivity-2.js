@@ -1,7 +1,6 @@
 //  store effects
 let depMaps = new Map()
 
-let effect = () => {total = product.price * product.quanity}
 let track = (key) => {
   let dep = depMaps.get(key)
   if (!dep) {
@@ -25,9 +24,11 @@ let product = {
 }
 let total = 0
 
-track('quanity')
+let effect = () => {total = product.price * product.quanity}
 effect()
 console.log(total)
+
+track('quanity')
 
 product.quanity = 4
 trigger('quanity')
